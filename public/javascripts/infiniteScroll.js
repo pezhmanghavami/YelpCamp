@@ -14,9 +14,11 @@ window.addEventListener('scroll', () => {
 });
 
 const reqMorePosts = () => {
-    for (let index = loadedCampgrounds.length; index < loadedCampgrounds.length + 5; index++) {
-        //console.log(`Requesting for : ${index}`);
-        addPostsToDOM(index);
+    if (data.length > loadedCampgrounds.length + 5) {
+        for (let index = loadedCampgrounds.length; index < loadedCampgrounds.length + 5; index++) {
+            //console.log(`Requesting for : ${index}`);
+            addPostsToDOM(index);
+        }
     }
 }
 
