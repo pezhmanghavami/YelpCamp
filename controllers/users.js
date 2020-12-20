@@ -7,9 +7,9 @@ const renderRegister = (req, res) => {
 
 const register = async (req, res, next) => {
     try {
-        const { email, username, password } = req.body;
-        const user = new User({ email, username });
-        const registeredUser = await User.register(user, password);
+        const { user: userData } = req.body;
+        const user = new User({ email: userData.email, username: userData.username });
+        const registeredUser = await User.register(user, userData.password);
         req.login(registeredUser, err => {
             if (err) return next(err);
             req.flash('success', 'Welcome to Yelp Camp!');

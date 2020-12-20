@@ -7,10 +7,11 @@
                     alt="" class="card-img-top" />
                 <div class="card-body">
                     <h5 class="card-title">Register</h5>
-                    <form action="/register" method="POST" class="validated-formmm" novalidate>
+                    <form action="/register" method="POST" class="validated-form" novalidate>
                         <div class="mb-3">
                             <label class="form-label" for="username">Username</label>
-                            <input class="form-control" type="text" id="username" name="username" required autofocus>
+                            <input class="form-control" type="text" id="username" name="user[username]" required
+                                autofocus>
                             <div class="valid-feedback">
                                 Looks good!
                             </div>
@@ -20,7 +21,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label" for="email">Email</label>
-                            <input class="form-control" type="email" id="email" name="email" required>
+                            <input class="form-control" type="email" id="email" name="user[email]" required>
                             <div class="valid-feedback">
                                 Looks good!
                             </div>
@@ -30,7 +31,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label" for="password">Password</label>
-                            <input class="form-control" type="password" id="password" name="password"
+                            <input class="form-control" type="password" id="password" name="user[password]"
                                 pattern="(?=.*[!@#$%^&*])(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
                             <div class="valid-feedback">
                                 Looks good!
@@ -42,7 +43,8 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label" for="password-re">Re-enter Password</label>
-                            <input class="form-control" type="password" id="password-re" name="passwordRe" required>
+                            <input class="form-control" type="password" id="password-re" name="user[passwordRe]"
+                                required>
                             <div class="valid-feedback">
                                 Looks good!
                             </div>

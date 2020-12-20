@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const { wrapAsync } = require('../utils/wrapAsync');
 const users = require('../controllers/users');
+const { wrapAsync } = require('../utils/wrapAsync');
+const { validateUser } = require('../middlewares');
 
 router.route('/register')
     .get(users.renderRegister)
-    .post(wrapAsync(users.register));
+    .post(validateUser,wrapAsync(users.register));
 
 router.route('/login')
     .get(users.renderLogin)

@@ -1,7 +1,38 @@
-const { campgroundJoiSchema, reviewJoiSchema } = require('./joiSchemas.js');
+const { campgroundJoiSchema, reviewJoiSchema, userJoiSchema } = require('./joiSchemas.js');
 const { ExpressError } = require('./utils/ExpressError');
 const { Campground } = require('./models/campground');
 const { Review } = require('./models/review');
+
+
+const validateCampground = (req, res, next) => {
+    const { error } = campgroundJoiSchema.validate(req.body);
+    if (error) {
+        const msg = error.details.map(el => el.message).join(',')
+        throw new ExpressError(msg, 400)
+    } else {
+        next();
+    }
+}
+
+const validateReview = (req, res, next) => {
+    const { error } = reviewJoiSchema.validate(req.body);
+    if (error) {
+        const msg = error.details.map(el => el.message).join(',')
+        throw new ExpressError(msg, 400)
+    } else {
+        next();
+    }
+}
+
+const validateUser = (req, res, next) => {
+    const { error } = userJoiSchema.validate(req.body);
+    if (error) {
+        const msg = error.details.map(el => el.message).join(',')
+        throw new ExpressError(msg, 400)
+    } else {
+        next();
+    }
+}
 
 const isLoggedIn = (req, res, next) => {
     if (!req.isAuthenticated()) {
@@ -10,17 +41,6 @@ const isLoggedIn = (req, res, next) => {
         return res.redirect('/login');
     }
     next();
-}
-
-const validateCampground = (req, res, next) => {
-    const { error } = campgroundJoiSchema.validate(req.body);
-    console.log(req.body);
-    if (error) {
-        const msg = error.details.map(el => el.message).join(',')
-        throw new ExpressError(msg, 400)
-    } else {
-        next();
-    }
 }
 
 const isCampgroundAuthor = async (req, res, next) => {
@@ -43,17 +63,9 @@ const isReviewAuthor = async (req, res, next) => {
     next();
 }
 
-const validateReview = (req, res, next) => {
-    const { error } = reviewJoiSchema.validate(req.body);
-    if (error) {
-        const msg = error.details.map(el => el.message).join(',')
-        throw new ExpressError(msg, 400)
-    } else {
-        next();
-    }
-}
 
 module.exports = {
+    validateUser,
     validateReview,
     validateCampground,
     isLoggedIn,
