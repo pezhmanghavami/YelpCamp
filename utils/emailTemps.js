@@ -1,6 +1,39 @@
 const { urlencoded } = require("express")
 
-const msg = {
+const emailVerified = {
+    subject: "🏕️ Your email has been verified! - YelpCamp 🏕️",
+    text: function (a) {
+        return `Your email has been successfully verified.`
+    },
+    html: function (a) {
+        return `<!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Your email has been successfully verified</title>
+            <style>
+                body{
+                    text-align: center;
+                    background-color: #353535;
+                    color: white;
+                }
+                a {
+                    color: #4f82ce;
+                }
+            </style>
+        </head>
+        <body>
+            <main>
+                <h3>Your email has been successfully verified!</h3>
+                <a href="http://127.0.0.1:300/campgrounds">Start browsing our campgrounds now!</a>
+            </main>
+        </body>
+        </html>`
+    }
+}
+
+const newUser = {
     subject: "🏕️ Welcome to YelpCamp! 🏕️",
     text: function (verifyAccURL) {
         return `Welcome to YelpCamp!\nPlease verify Your Account throught this link\n${verifyAccURL}`
@@ -35,4 +68,5 @@ const msg = {
         </html>`
     }
 }
-module.exports = { msg }
+
+module.exports = { newUser, emailVerified }

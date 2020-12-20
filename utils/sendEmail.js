@@ -1,5 +1,5 @@
 const nodemailer = require('nodemailer');
-const { msg: newUserEmail } = require("./newUserEmailTemp");
+const emailTemp = require("./emailTemps");
 
 const sendEmail = async (targetUserEmail, verifyAccURL, msgType) => {
     try {
@@ -12,7 +12,7 @@ const sendEmail = async (targetUserEmail, verifyAccURL, msgType) => {
                 pass: process.env.AUTO_EMAIL_PASSWORD, // generated ethereal password
             },
         });
-        const msg = msgType === "newUser" ? newUserEmail : ""
+        const msg = emailTemp[msgType];
         // send mail with defined transport object
         let info = await transporter.sendMail({
             from: '"YelpCamp 🏕️" <test@YOURMAIL.com>', // sender address

@@ -1,7 +1,6 @@
 const { User } = require('../models/user');
 const { sendEmail } = require('../utils/sendEmail');
 const crypto = require("crypto");
-const { clearCache } = require('ejs');
 
 const renderRegister = (req, res) => {
     res.render('users/register');
@@ -30,11 +29,19 @@ const verifyEmail = async (req, res) => {
     try {
         const user = await User.findOne({ emailToken: req.query.token });
         if (user) {
-
+            user.emailToken = null;
+            user.isVerified = true;
+            await user.save();
+            req.login(user, err => {
+                if (err) return next(err);
+                req.flash('success', `Welcome to Yelp Camp ${user.username}!`);
+                sendEmail(email, null, "emailVerified");
+                return res.redirect('/campgrounds');
+            });
         }
     } catch (e) {
         req.flash("error", e.message);
-        res.redirect('/');
+        return res.redirect('/');
     }
 }
 

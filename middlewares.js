@@ -2,7 +2,9 @@ const { campgroundJoiSchema, reviewJoiSchema, userJoiSchema } = require('./joiSc
 const { ExpressError } = require('./utils/ExpressError');
 const { Campground } = require('./models/campground');
 const { Review } = require('./models/review');
-
+const { User } = require('./models/user.js');
+const crypto = require("crypto");
+const { sendEmail } = require('./utils/sendEmail');
 
 const validateCampground = (req, res, next) => {
     const { error } = campgroundJoiSchema.validate(req.body);
@@ -63,12 +65,33 @@ const isReviewAuthor = async (req, res, next) => {
     next();
 }
 
+const isVerified = async (req, res, next) => {
+    try {
+        const { username } = req.body;
+        const user = await User.findOne({ username });
+        console.log(user.isVerified)
+        if (user.isVerified) {
+            return next();
+        }
+        user.emailToken = crypto.randomBytes(64).toString("hex");
+        await user.save();
+        const verifyAccURL = `http://${req.headers.host}/verify-email?token=${user.emailToken}`;
+        sendEmail(user.email, verifyAccURL, "newUser");
+        req.flash("error", "Please verify Your Email Address to Login.");
+        return res.redirect('/login');
+    } catch (e) {
+        req.flash("error", "isVerified BROKE.");
+        console.log(e.message);
+        res.redirect('/login');
+    }
+}
 
 module.exports = {
     validateUser,
     validateReview,
     validateCampground,
     isLoggedIn,
+    isVerified,
     isReviewAuthor,
     isCampgroundAuthor
 }
