@@ -7,12 +7,14 @@ const { validateUser } = require('../middlewares');
 
 router.route('/register')
     .get(users.renderRegister)
-    .post(validateUser,wrapAsync(users.register));
+    .post(validateUser, wrapAsync(users.register));
+
+router.get('/verify-email', wrapAsync(users.verifyEmail));
 
 router.route('/login')
     .get(users.renderLogin)
-    .post(passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }), users.login)
+    .post(passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }), users.login);
 
-router.get('/logout', users.logout)
+router.get('/logout', users.logout);
 
 module.exports = router;

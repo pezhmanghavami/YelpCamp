@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer');
 const { msg: newUserEmail } = require("./newUserEmailTemp");
 
-const sendEmail = async (targetUserEmail, msgType) => {
+const sendEmail = async (targetUserEmail, verifyAccURL, msgType) => {
     try {
         let transporter = nodemailer.createTransport({
             host: process.env.MAIL_HOST,
@@ -18,8 +18,8 @@ const sendEmail = async (targetUserEmail, msgType) => {
             from: '"YelpCamp 🏕️" <test@YOURMAIL.com>', // sender address
             to: targetUserEmail, // list of receivers
             subject: msg.subject,
-            text: msg.text(),
-            html: msg.html(),
+            text: msg.text(verifyAccURL),
+            html: msg.html(verifyAccURL),
         });
 
         console.log("Message sent: %s", info.messageId);

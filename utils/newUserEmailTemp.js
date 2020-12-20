@@ -1,9 +1,11 @@
+const { urlencoded } = require("express")
+
 const msg = {
     subject: "🏕️ Welcome to YelpCamp! 🏕️",
-    text: function () {
-        return `Welcome to YelpCamp!`
+    text: function (verifyAccURL) {
+        return `Welcome to YelpCamp!\nPlease verify Your Account throught this link\n${verifyAccURL}`
     },
-    html: function () {
+    html: function (verifyAccURL) {
         return `<!DOCTYPE html>
         <html lang="en">
         <head>
@@ -24,6 +26,9 @@ const msg = {
         <body>
             <main>
                 <h3>Welcome to YelpCamp!</h3>
+                <a href="${verifyAccURL}">Please verify Your Account by clicking on this link.</a>
+                <p>If the link above doesn't work please use copy and paste this link into your browser and press enter.</p>
+                ${verifyAccURL}
                 <a href="http://127.0.0.1:300/campgrounds">Start browsing our campgrounds now!</a>
             </main>
         </body>

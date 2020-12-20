@@ -1,5 +1,7 @@
 const { User } = require('../models/user');
 const { sendEmail } = require('../utils/sendEmail');
+const crypto = require("crypto");
+const { clearCache } = require('ejs');
 
 const renderRegister = (req, res) => {
     res.render('users/register');
@@ -8,17 +10,31 @@ const renderRegister = (req, res) => {
 const register = async (req, res, next) => {
     try {
         const { user: userData } = req.body;
-        const user = new User({ email: userData.email, username: userData.username });
+        const user = new User({
+            email: userData.email,
+            username: userData.username,
+            emailToken: crypto.randomBytes(64).toString("hex")
+        });
         const registeredUser = await User.register(user, userData.password);
-        req.login(registeredUser, err => {
-            if (err) return next(err);
-            req.flash('success', 'Welcome to Yelp Camp!');
-            sendEmail(email, "newUser");
-            res.redirect('/campgrounds');
-        })
+        const verifyAccURL = `http://${req.headers.host}/verify-email?token=${user.emailToken}`;
+        sendEmail(email, verifyAccURL, "newUser");
+        req.flash('Success', "Welcome to YelpCamp Please Verify Your email address to continue.");
+        res.redirect('/');
     } catch (e) {
         req.flash('error', e.message);
-        res.redirect('register');
+        res.redirect('/register');
+    }
+}
+
+const verifyEmail = async (req, res) => {
+    try {
+        const user = await User.findOne({ emailToken: req.query.token });
+        if (user) {
+
+        }
+    } catch (e) {
+        req.flash("error", e.message);
+        res.redirect('/');
     }
 }
 
@@ -44,6 +60,7 @@ module.exports = {
     renderLogin,
     renderRegister,
     register,
+    verifyEmail,
     login,
     logout
 }

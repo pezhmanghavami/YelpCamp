@@ -7,6 +7,15 @@ const UserSchema = new Schema({
         type: String,
         required: true,
         unique: true
+    },
+    emailToken: String,
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
+    isPaid: {
+        type: Boolean,
+        default: false
     }
 });
 
@@ -14,6 +23,6 @@ UserSchema.plugin(passportLocalMongoose);
 
 const User = mongoose.model('User', UserSchema);
 
-module.exports ={
+module.exports = {
     User
 }
