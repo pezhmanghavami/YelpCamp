@@ -15,8 +15,9 @@ const register = async (req, res, next) => {
             emailToken: crypto.randomBytes(64).toString("hex")
         });
         const registeredUser = await User.register(user, userData.password);
+        console.log(registeredUser);
         const verifyAccURL = `http://${req.headers.host}/verify-email?token=${user.emailToken}`;
-        sendEmail(email, verifyAccURL, "newUser");
+        await sendEmail(email, verifyAccURL, "newUser");
         req.flash('Success', "Welcome to YelpCamp Please Verify Your email address to continue.");
         res.redirect('/');
     } catch (e) {
@@ -32,10 +33,10 @@ const verifyEmail = async (req, res) => {
             user.emailToken = null;
             user.isVerified = true;
             await user.save();
-            req.login(user, err => {
+            req.login(user, async err => {
                 if (err) return next(err);
                 req.flash('success', `Welcome to Yelp Camp ${user.username}!`);
-                sendEmail(email, null, "emailVerified");
+                await sendEmail(user.email, null, "emailVerified");//also the link that's for verifying email doesn't show anthing after use.ADD some kind of message
                 return res.redirect('/campgrounds');
             });
         }

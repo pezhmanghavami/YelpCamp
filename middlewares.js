@@ -71,12 +71,14 @@ const isVerified = async (req, res, next) => {
         const user = await User.findOne({ username });
         console.log(user.isVerified)
         if (user.isVerified) {
+            //user.isVerified = false;
+            //await user.save();
             return next();
         }
         user.emailToken = crypto.randomBytes(64).toString("hex");
         await user.save();
         const verifyAccURL = `http://${req.headers.host}/verify-email?token=${user.emailToken}`;
-        sendEmail(user.email, verifyAccURL, "newUser");
+        await sendEmail(user.email, verifyAccURL, "newUser");
         req.flash("error", "Please verify Your Email Address to Login.");
         return res.redirect('/login');
     } catch (e) {
