@@ -10,8 +10,6 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const { ExpressError } = require('./utils/ExpressError');
 const methodOverride = require('method-override');
-const passport = require('passport');
-const LocalStrategy = require('passport-local');
 const { User } = require('./models/user');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
@@ -125,12 +123,6 @@ app.use(
 );
 
 //---------------------------------------------------------------------------------------------------------------------
-app.use(passport.initialize());
-app.use(passport.session());
-passport.use(new LocalStrategy(User.authenticate()));
-
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
 
 app.use((req, res, next) => {
     res.locals.currentUser = req.user;
