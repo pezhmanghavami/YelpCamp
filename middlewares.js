@@ -75,12 +75,17 @@ const isVerified = async (req, res, next) => {
             //await user.save();
             return next();
         }
-        user.emailToken = crypto.randomBytes(64).toString("hex");
-        await user.save();
-        const verifyAccURL = `http://${req.headers.host}/verify-email?token=${user.emailToken}`;
-        await sendEmail(user.email, verifyAccURL, "newUser");
-        req.flash("error", "Please verify Your Email Address to Login.");
-        return res.redirect('/login');
+        if (user.emailToken == null) {
+            user.emailToken = crypto.randomBytes(64).toString("hex");
+            await user.save();
+            const verifyAccURL = `http://${req.headers.host}/verify-email?token=${user.emailToken}`;
+            await sendEmail(user.email, verifyAccURL, "newUser");
+            req.flash("error", "Please verify Your Email Address to Login.");
+            return res.redirect('/login');
+        } else {
+            req.flash("error", "Please verify Your Email Address to Login; An email has already been sent to you.");
+            return res.redirect('/login');
+        }
     } catch (e) {
         req.flash("error", "isVerified BROKE.");
         console.log(e.message);

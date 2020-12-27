@@ -36,7 +36,7 @@ const verifyEmail = async (req, res) => {
             req.login(user, async err => {
                 if (err) return next(err);
                 req.flash('success', `Welcome to Yelp Camp ${user.username}!`);
-                await sendEmail(user.email, null, "emailVerified");//also the link that's for verifying email doesn't show anthing after use.ADD some kind of message
+                await sendEmail(user.email, null, "emailVerified");
                 return res.redirect('/campgrounds');
             });
         }
