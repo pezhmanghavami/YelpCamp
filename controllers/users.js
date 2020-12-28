@@ -16,11 +16,11 @@ const register = async (req, res) => {
             emailToken: crypto.randomBytes(64).toString("hex")
         });
         await user.save();
-        console.log(user);
+        // console.log(user);
         const verifyAccURL = `http://${req.headers.host}/verify-email?token=${user.emailToken}`;
         await sendEmail(user.email, verifyAccURL, "newUser");
-        req.flash('Success', "Welcome to YelpCamp Please Verify Your email address to continue.");
-        res.redirect('/');
+        req.flash('success', "Welcome to YelpCamp Please Verify Your email address to continue.");
+        res.redirect('/campgrounds');
     } catch (e) {
         req.flash('error', e.message);
         res.redirect('/register');
@@ -30,7 +30,8 @@ const register = async (req, res) => {
 const verifyEmail = async (req, res) => {
     try {
         const user = await User.findOne({ emailToken: req.query.token },
-            "emailToken isVerified email");
+            "emailToken isVerified email username");
+            console.log(user);
         if (user) {
             user.emailToken = null;
             user.isVerified = true;
