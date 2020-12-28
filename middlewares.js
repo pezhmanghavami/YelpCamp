@@ -68,7 +68,8 @@ const isReviewAuthor = async (req, res, next) => {
 const isVerified = async (req, res, next) => {
     try {
         const { username } = req.body;
-        const user = await User.findOne({ username });
+        const criteria = { $or: [{ username: username }, { email: username }, { mobile: username }, { anything: username }] };
+        const user = await User.findOne(criteria, "isVerified emailToken email");
         if (!user) {
             req.flash("error", "Your username/email or password is incorrect.");
             return res.redirect('/login');

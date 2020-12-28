@@ -29,7 +29,8 @@ const register = async (req, res) => {
 
 const verifyEmail = async (req, res) => {
     try {
-        const user = await User.findOne({ emailToken: req.query.token });
+        const user = await User.findOne({ emailToken: req.query.token },
+            "emailToken isVerified email");
         if (user) {
             user.emailToken = null;
             user.isVerified = true;

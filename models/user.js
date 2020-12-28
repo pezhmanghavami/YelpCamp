@@ -11,23 +11,28 @@ const userSchema = new Schema({
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        select: false
     },
     password: {
         type: String,
-        required: true
+        required: true,
+        select: false
     },
     emailToken: {
         type: String,
-        default: null
+        default: null,
+        select: false
     },
     isVerified: {
         type: Boolean,
-        default: false
+        default: false,
+        select: false
     },
     isPaid: {
         type: Boolean,
-        default: false
+        default: false,
+        select: false
     },
     date: {
         type: Date,
@@ -36,11 +41,13 @@ const userSchema = new Schema({
 });
 
 userSchema.statics.findAndValidate = async function (username, password) {
-    const foundUser = await this.findOne({ username });
+    const criteria = { $or: [{ username: username }, { email: username }, { mobile: username }, { anything: username }] };
+    const foundUser = await this.findOne(criteria, "password");
+    console.log(typeof (foundUser));
     if (foundUser) {
         const isValid = await bcrypt.compare(password, foundUser.password);
         if (isValid) {
-            return foundUser;
+            return { _id: foundUser._id };
         }
     }
     return false
