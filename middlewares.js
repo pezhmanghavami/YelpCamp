@@ -69,12 +69,17 @@ const isVerified = async (req, res, next) => {
     try {
         const { username } = req.body;
         const user = await User.findOne({ username });
+        if (!user) {
+            req.flash("error", "Your username/email or password is incorrect.");
+            return res.redirect('/login');
+        }
         console.log(user.isVerified);
         if (user.isVerified) {
             //user.isVerified = false;
             //await user.save();
             return next();
         }
+
         if (user.emailToken == null) {
             user.emailToken = crypto.randomBytes(64).toString("hex");
             await user.save();
