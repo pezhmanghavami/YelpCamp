@@ -44,7 +44,7 @@ const userJoiSchema = Joi.object({
     user: Joi.object({
         username: Joi.string().min(4).max(30).required(),
         email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }).required(),
-        password: Joi.string().pattern(new RegExp(/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/)).required(),
+        password: Joi.string().pattern(new RegExp(/^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*]{8,}$/)).required(),
         passwordRe: Joi.ref('password'),
     }).required()
 });

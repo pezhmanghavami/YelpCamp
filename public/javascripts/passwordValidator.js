@@ -12,7 +12,7 @@ const validatePassword = () => {
     const newPassword = password.value;
     const minNumberofChars = 8;
     // const maxNumberofChars = 16;
-    const regularExpression = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/;
+    const regularExpression = /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*]{8,}$/;
     if (newPassword.length >= minNumberofChars && regularExpression.test(newPassword)) {
         password.classList.remove("is-invalid");
         password.classList.add("is-valid");

@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const bcrypt = require('bcrypt');
 
+//we can have an array of the user's comments and posts
 const userSchema = new Schema({
     username: {
         type: String,
