@@ -2,12 +2,23 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
+    username: {
+        type: String,
+        required: true,
+        unique: true
+    },
     email: {
         type: String,
         required: true,
         unique: true
     },
-    emailToken: String,
+    password: {
+        type: String,
+        required: true
+    },
+    emailToken: {
+        type: String
+    },
     isVerified: {
         type: Boolean,
         default: false
@@ -15,6 +26,10 @@ const UserSchema = new Schema({
     isPaid: {
         type: Boolean,
         default: false
+    },
+    date: {
+        type: Date,
+        default: Date.now
     }
 });
 

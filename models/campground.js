@@ -42,7 +42,11 @@ const campgroundSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: 'Review'
         }
-    ]
+    ],
+    date: {
+        type: Date,
+        default: Date.now
+    }
 }, opts);
 
 
