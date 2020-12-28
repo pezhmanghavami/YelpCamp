@@ -44,7 +44,7 @@ const userSchema = new Schema({
 userSchema.statics.findAndValidate = async function (username, password) {
     const criteria = { $or: [{ username: username }, { email: username }, { mobile: username }, { anything: username }] };
     const foundUser = await this.findOne(criteria, "password");
-    console.log(typeof (foundUser));
+    //console.log(typeof (foundUser));
     if (foundUser) {
         const isValid = await bcrypt.compare(password, foundUser.password);
         if (isValid) {

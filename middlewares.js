@@ -74,7 +74,7 @@ const isVerified = async (req, res, next) => {
             req.flash("error", "Your username/email or password is incorrect.");
             return res.redirect('/login');
         }
-        console.log(user.isVerified);
+        //console.log(user.isVerified);
         if (user.isVerified) {
             //user.isVerified = false;
             //await user.save();
@@ -94,7 +94,7 @@ const isVerified = async (req, res, next) => {
         }
     } catch (e) {
         req.flash("error", "isVerified BROKE.");
-        console.log(e.message);
+        //console.log(e.message);
         res.redirect('/login');
     }
 }
