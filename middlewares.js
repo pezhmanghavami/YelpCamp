@@ -48,7 +48,7 @@ const isLoggedIn = (req, res, next) => {
 const isCampgroundAuthor = async (req, res, next) => {
     const { id } = req.params;
     const campground = await Campground.findById(id);
-    if (!campground.author.equals(req.user._id)) {
+    if (!campground.author.equals(req.session.user_id)) {
         req.flash('error', 'You do not have permission to do that!');
         return res.redirect(`/campgrounds/${id}`);
     }
@@ -58,7 +58,7 @@ const isCampgroundAuthor = async (req, res, next) => {
 const isReviewAuthor = async (req, res, next) => {
     const { id, reviewId } = req.params;
     const review = await Review.findById(reviewId);
-    if (!review.author.equals(req.user._id)) {
+    if (!review.author.equals(req.session.user_id)) {
         req.flash('error', 'You do not have permission to do that!');
         return res.redirect(`/campgrounds/${id}`);
     }

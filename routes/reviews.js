@@ -6,6 +6,6 @@ const { wrapAsync } = require('../utils/wrapAsync');
 
 router.post('/', isLoggedIn, validateReview, wrapAsync(reviews.createReview))
 
-router.delete('/:reviewId', isLoggedIn, isReviewAuthor, wrapAsync(reviews.deleteReview))
+router.delete('/:reviewId', isLoggedIn, wrapAsync(isReviewAuthor), wrapAsync(reviews.deleteReview))
 
 module.exports = router;

@@ -16,10 +16,10 @@ router.get('/new', isLoggedIn, campgrounds.renderNewForm);
 
 router.route('/:id')
     .get(wrapAsync(campgrounds.showCampground))
-    .put(isLoggedIn, isCampgroundAuthor, upload.array('image'), validateCampground, wrapAsync(campgrounds.updateCampground))
-    .delete(isLoggedIn, isCampgroundAuthor, wrapAsync(campgrounds.deleteCampground));
+    .put(isLoggedIn, wrapAsync(isCampgroundAuthor), upload.array('image'), validateCampground, wrapAsync(campgrounds.updateCampground))
+    .delete(isLoggedIn, wrapAsync(isCampgroundAuthor), wrapAsync(campgrounds.deleteCampground));
 
-router.get('/:id/edit', isLoggedIn, isCampgroundAuthor, wrapAsync(campgrounds.renderEditForm));
+router.get('/:id/edit', isLoggedIn, wrapAsync(isCampgroundAuthor), wrapAsync(campgrounds.renderEditForm));
 
 
 

@@ -66,7 +66,8 @@ const login = async (req, res) => {
 }
 
 const logout = (req, res) => {
-    req.session.destroy();
+    //req.session.destroy();
+    delete req.session.user_id
     req.flash('success', "Goodbye!");
     res.redirect('/campgrounds');
 }
