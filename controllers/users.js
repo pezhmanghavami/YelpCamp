@@ -6,18 +6,19 @@ const renderRegister = (req, res) => {
     res.render('users/register');
 }
 
-const register = async (req, res, next) => {
+const register = async (req, res) => {
     try {
         const { user: userData } = req.body;
         const user = new User({
             email: userData.email,
             username: userData.username,
+            password: userData.password,
             emailToken: crypto.randomBytes(64).toString("hex")
         });
-        const registeredUser = await User.register(user, userData.password);
-        console.log(registeredUser);
+        await user.save();
+        console.log(user);
         const verifyAccURL = `http://${req.headers.host}/verify-email?token=${user.emailToken}`;
-        await sendEmail(email, verifyAccURL, "newUser");
+        await sendEmail(user.email, verifyAccURL, "newUser");
         req.flash('Success', "Welcome to YelpCamp Please Verify Your email address to continue.");
         res.redirect('/');
     } catch (e) {
@@ -33,12 +34,11 @@ const verifyEmail = async (req, res) => {
             user.emailToken = null;
             user.isVerified = true;
             await user.save();
-            req.login(user, async err => {
-                if (err) return next(err);
-                req.flash('success', `Welcome to Yelp Camp ${user.username}!`);
-                await sendEmail(user.email, null, "emailVerified");
-                return res.redirect('/campgrounds');
-            });
+            req.session.user_id = user._id;
+            req.flash('success', `Welcome to Yelp Camp ${user.username}!`);
+            await sendEmail(user.email, null, "emailVerified");
+            return res.redirect('/campgrounds');
+
         }
     } catch (e) {
         req.flash("error", e.message);
@@ -50,16 +50,23 @@ const renderLogin = (req, res) => {
     res.render('users/login');
 }
 
-const login = (req, res) => {
-    req.flash('success', 'welcome back!');
-    const redirectUrl = req.session.returnTo || '/campgrounds';
-    delete req.session.returnTo;
-    res.redirect(redirectUrl);
+const login = async (req, res) => {
+    const { username, password } = req.body;
+    const user = await User.findAndValidate(username, password);
+    if (user) {
+        req.flash('success', 'welcome back!');
+        const redirectUrl = req.session.returnTo || '/campgrounds';
+        delete req.session.returnTo;
+        req.session.user_id = user._id;
+        return res.redirect(redirectUrl);
+    } else {
+        req.flash("error", "Your username/email or password is incorrect.");
+        return res.redirect('/login');
+    }
 }
 
 const logout = (req, res) => {
-    req.logout();
-    // req.session.destroy();
+    req.session.destroy();
     req.flash('success', "Goodbye!");
     res.redirect('/campgrounds');
 }

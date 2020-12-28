@@ -37,7 +37,7 @@ const validateUser = (req, res, next) => {
 }
 
 const isLoggedIn = (req, res, next) => {
-    if (!req.isAuthenticated()) {
+    if (!req.session.user_id) {
         req.session.returnTo = req.originalUrl
         req.flash('error', 'You must be signed in first!');
         return res.redirect('/login');
@@ -69,7 +69,7 @@ const isVerified = async (req, res, next) => {
     try {
         const { username } = req.body;
         const user = await User.findOne({ username });
-        console.log(user.isVerified)
+        console.log(user.isVerified);
         if (user.isVerified) {
             //user.isVerified = false;
             //await user.save();

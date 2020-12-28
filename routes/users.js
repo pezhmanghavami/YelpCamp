@@ -12,7 +12,7 @@ router.get('/verify-email', wrapAsync(users.verifyEmail));
 
 router.route('/login')
     .get(users.renderLogin)
-    .post(isVerified, passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }), users.login);
+    .post(wrapAsync(isVerified), wrapAsync(users.login));
 
 router.get('/logout', users.logout);
 
