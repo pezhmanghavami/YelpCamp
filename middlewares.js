@@ -1,4 +1,4 @@
-const { campgroundJoiSchema, reviewJoiSchema, userJoiSchema } = require('./joiSchemas.js');
+const { campgroundJoiSchema, passwordJoiSchema, reviewJoiSchema, userJoiSchema } = require('./joiSchemas.js');
 const { ExpressError } = require('./utils/ExpressError');
 const { Campground } = require('./models/campground');
 const { Review } = require('./models/review');
@@ -28,6 +28,16 @@ const validateReview = (req, res, next) => {
 
 const validateUser = (req, res, next) => {
     const { error } = userJoiSchema.validate(req.body);
+    if (error) {
+        const msg = error.details.map(el => el.message).join(',')
+        throw new ExpressError(msg, 400)
+    } else {
+        next();
+    }
+}
+
+const validatePassword = (req, res, next) => {
+    const { error } = passwordJoiSchema.validate(req.body);
     if (error) {
         const msg = error.details.map(el => el.message).join(',')
         throw new ExpressError(msg, 400)
@@ -80,7 +90,6 @@ const isVerified = async (req, res, next) => {
             //await user.save();
             return next();
         }
-
         if (user.emailToken == null) {
             user.emailToken = crypto.randomBytes(64).toString("hex");
             await user.save();
@@ -102,6 +111,7 @@ const isVerified = async (req, res, next) => {
 module.exports = {
     validateUser,
     validateReview,
+    validatePassword,
     validateCampground,
     isLoggedIn,
     isVerified,

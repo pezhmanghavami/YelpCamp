@@ -49,8 +49,14 @@ const userJoiSchema = Joi.object({
     }).required()
 });
 
+const passwordJoiSchema = Joi.object({
+    password: Joi.string().pattern(new RegExp(/^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*]{8,}$/)).required(),
+    passwordRe: Joi.ref('password')
+});
+
 module.exports = {
+    userJoiSchema,
     reviewJoiSchema,
-    campgroundJoiSchema,
-    userJoiSchema
+    passwordJoiSchema,
+    campgroundJoiSchema
 }

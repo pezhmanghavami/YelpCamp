@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const users = require('../controllers/users');
 const { wrapAsync } = require('../utils/wrapAsync');
-const { validateUser, isVerified } = require('../middlewares');
+const { validatePassword, validateUser, isVerified } = require('../middlewares');
 
 router.route('/register')
     .get(users.renderRegister)
@@ -16,7 +16,7 @@ router.route('/forgot-password')
 
 router.route('/reset-password')
     .get(wrapAsync(users.renderResetPassword))
-    .patch(wrapAsync(users.resetPassword));
+    .patch(validatePassword, wrapAsync(users.resetPassword));
 
 router.route('/login')
     .get(users.renderLogin)

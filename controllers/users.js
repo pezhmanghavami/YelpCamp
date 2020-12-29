@@ -82,9 +82,14 @@ const forgotPassword = async (req, res, next) => {
 
 const renderResetPassword = async (req, res) => {
     const token = req.query.token;
-    const user = await User.findOne({ emailToken: token });
-    if (user) {
-        res.render("users/resetPassword", { token });
+    if (token) {
+        const user = await User.findOne({ emailToken: token });
+        if (user) {
+            res.render("users/resetPassword", { token });
+        } else {
+            req.flash('error', `This link doesn't exist.`);
+            return res.redirect("/campgrounds");
+        }
     } else {
         req.flash('error', `This link doesn't exist.`);
         return res.redirect("/campgrounds");
@@ -92,7 +97,26 @@ const renderResetPassword = async (req, res) => {
 }
 
 const resetPassword = async (req, res) => {
-    res.send(`Reset Password Patch route hit.\n${req.query.token}`);
+    const token = req.query.token;
+    if (token) {
+        const user = await User.findOne({ emailToken: token }, "password email emailToken");
+        if (user) {
+            const newPassword = req.body.password;
+            user.password = newPassword;
+            emailToken = null;
+            await user.save();
+            req.session.user_id = user._id;
+            req.flash("success", "Your password has been successfully changed. Welcome back!");
+            await sendEmail(user.email, null, "passwordChanged");
+            res.redirect("/campgrounds");
+        } else {
+            req.flash('error', `This link doesn't exist.`);
+            return res.redirect("/campgrounds");
+        }
+    } else {
+        // req.flash("error", "You do not have permision to visit this page.");
+        next(new ExpressError('You do not have permision to visit this page.', 403));
+    }
 }
 
 
