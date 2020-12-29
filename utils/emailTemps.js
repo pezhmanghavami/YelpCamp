@@ -58,7 +58,7 @@ const newUser = {
             <main>
                 <h3>Welcome to YelpCamp!</h3>
                 <a href="${verifyAccURL}">Please verify Your Account by clicking on this link.</a>
-                <p>If the link above doesn't work please use copy and paste this link into your browser and press enter.</p>
+                <p>If the link above doesn't work please copy and paste this link into your browser and press enter.</p>
                 <p>${verifyAccURL}</p>
                 <a href="http://127.0.0.1:300/campgrounds">Start browsing our campgrounds now!</a>
             </main>
@@ -96,7 +96,7 @@ const forgotPassword = {
             <main>
                 <h3>Forgot Password</h3>
                 <a href="${verifyAccURL}">Please click on this link to reset your password.</a>
-                <p>If the link above doesn't work please use copy and paste this link into your browser and press enter.</p>
+                <p>If the link above doesn't work please copy and paste this link into your browser and press enter.</p>
                 <p>${verifyAccURL}</p>
                 <h3>If you didn't made this request please igonre this email.</h3>
             </main>

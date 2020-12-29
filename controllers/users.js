@@ -103,7 +103,7 @@ const resetPassword = async (req, res) => {
         if (user) {
             const newPassword = req.body.password;
             user.password = newPassword;
-            emailToken = null;
+            user.emailToken = null;
             await user.save();
             req.session.user_id = user._id;
             req.flash("success", "Your password has been successfully changed. Welcome back!");
