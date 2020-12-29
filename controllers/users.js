@@ -69,8 +69,8 @@ const forgotPassword = async (req, res, next) => {
         if (foundUser) {
             foundUser.emailToken = crypto.randomBytes(64).toString("hex");
             await foundUser.save();
-            const resetPasswordURL = `http://${req.headers.host}/reset-password?token=${user.emailToken}`;
-            await sendEmail(user.email, resetPasswordURL, "forgotPassword");
+            const resetPasswordURL = `http://${req.headers.host}/reset-password?token=${foundUser.emailToken}`;
+            await sendEmail(foundUser.email, resetPasswordURL, "forgotPassword");
         }
         req.flash('success', "If the entered info was correct an email has been sent to you.");
         return res.redirect("/campgrounds");
