@@ -138,4 +138,4 @@ const passwordChanged = {
     }
 }
 
-module.exports = { newUser, emailVerified }
+module.exports = { newUser, emailVerified, forgotPassword, passwordChanged }
