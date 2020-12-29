@@ -15,7 +15,7 @@ router.route('/forgot-password')
     .post(wrapAsync(users.forgotPassword));
 
 router.route('/reset-password')
-    .get(users.renderResetPassword)
+    .get(wrapAsync(users.renderResetPassword))
     .patch(wrapAsync(users.resetPassword));
 
 router.route('/login')

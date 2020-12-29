@@ -14,7 +14,7 @@ const renderNewForm = (req, res) => {
     res.render('campgrounds/new');
 }
 
-const createCampground = async (req, res, next) => {
+const createCampground = async (req, res) => {
     const geoData = await geocoder.forwardGeocode({
         query: req.body.campground.location,
         limit: 1

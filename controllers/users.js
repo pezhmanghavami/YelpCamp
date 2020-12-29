@@ -1,6 +1,7 @@
 const { User } = require('../models/user');
 const { sendEmail } = require('../utils/sendEmail');
 const crypto = require("crypto");
+const { ExpressError } = require('../utils/ExpressError');
 
 const renderRegister = (req, res) => {
     res.render('users/register');
@@ -35,7 +36,7 @@ const verifyEmail = async (req, res) => {
                 { emailToken: req.query.token }
             ]
         },//this fixes a bug that will send verification mail for the first user in db 
-        //if the query string is empty
+            //if the query string is empty
             "emailToken isVerified email username");
         //console.log(user);
         if (user) {
@@ -60,16 +61,38 @@ const renderForgotPassword = (req, res) => {
     res.render('users/forgotPassword');
 }
 
-const forgotPassword = async (req, res) => {
-
+const forgotPassword = async (req, res, next) => {
+    const username = req.body.username;
+    if (username) {
+        const criteria = { $or: [{ username: username }, { email: username }, { mobile: username }] };//Add mobile later
+        const foundUser = await User.findOne(criteria, "email emailToken");
+        if (foundUser) {
+            foundUser.emailToken = crypto.randomBytes(64).toString("hex");
+            await foundUser.save();
+            const resetPasswordURL = `http://${req.headers.host}/reset-password?token=${user.emailToken}`;
+            await sendEmail(user.email, resetPasswordURL, "forgotPassword");
+        }
+        req.flash('success', "If the entered info was correct an email has been sent to you.");
+        return res.redirect("/campgrounds");
+    } else {
+        // req.flash("error", "You do not have permision to visit this page.");
+        next(new ExpressError('You do not have permision to visit this page.', 403));
+    }
 }
 
-const renderResetPassword = (req, res) => {
-    res.render("users/resetPassword");
+const renderResetPassword = async (req, res) => {
+    const token = req.query.token;
+    const user = await User.findOne({ emailToken: token });
+    if (user) {
+        res.render("users/resetPassword", { token });
+    } else {
+        req.flash('error', `This link doesn't exist.`);
+        return res.redirect("/campgrounds");
+    }
 }
 
 const resetPassword = async (req, res) => {
-
+    res.send(`Reset Password Patch route hit.\n${req.query.token}`);
 }
 
 
