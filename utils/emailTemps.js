@@ -1,5 +1,3 @@
-const { urlencoded } = require("express")
-
 const emailVerified = {
     subject: "🏕️ Your email has been verified! - YelpCamp 🏕️",
     text: function (a) {

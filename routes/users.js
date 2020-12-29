@@ -10,6 +10,14 @@ router.route('/register')
 
 router.get('/verify-email', wrapAsync(users.verifyEmail));
 
+router.route('/forgot-password')
+    .get(users.renderForgotPassword)
+    .post(wrapAsync(users.forgotPassword));
+
+router.route('/reset-password')
+    .get(users.renderResetPassword)
+    .patch(wrapAsync(users.resetPassword));
+
 router.route('/login')
     .get(users.renderLogin)
     .post(wrapAsync(isVerified), wrapAsync(users.login));

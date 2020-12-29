@@ -29,9 +29,15 @@ const register = async (req, res) => {
 
 const verifyEmail = async (req, res) => {
     try {
-        const user = await User.findOne({ emailToken: req.query.token },
+        const user = await User.findOne({
+            $and: [
+                { emailToken: { $ne: null } },
+                { emailToken: req.query.token }
+            ]
+        },//this fixes a bug that will send verification mail for the first user in db 
+        //if the query string is empty
             "emailToken isVerified email username");
-            //console.log(user);
+        //console.log(user);
         if (user) {
             user.emailToken = null;
             user.isVerified = true;
@@ -40,13 +46,32 @@ const verifyEmail = async (req, res) => {
             req.flash('success', `Welcome to Yelp Camp ${user.username}!`);
             await sendEmail(user.email, null, "emailVerified");
             return res.redirect('/campgrounds');
-
+        } else {
+            req.flash('error', `This link doesn't exist.`);
+            return res.redirect("/campgrounds");
         }
     } catch (e) {
         req.flash("error", e.message);
         return res.redirect('/');
     }
 }
+
+const renderForgotPassword = (req, res) => {
+    res.render('users/forgotPassword');
+}
+
+const forgotPassword = async (req, res) => {
+
+}
+
+const renderResetPassword = (req, res) => {
+    res.render("users/resetPassword");
+}
+
+const resetPassword = async (req, res) => {
+
+}
+
 
 const renderLogin = (req, res) => {
     res.render('users/login');
@@ -77,8 +102,12 @@ const logout = (req, res) => {
 module.exports = {
     renderLogin,
     renderRegister,
+    renderResetPassword,
+    renderForgotPassword,
     register,
     verifyEmail,
+    resetPassword,
+    forgotPassword,
     login,
     logout
 }
