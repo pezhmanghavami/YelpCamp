@@ -25,6 +25,9 @@ const userSchema = new Schema({
         default: null,
         select: false
     },
+    emailTokenExpiry: {
+        type: Date //  user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+    },
     isVerified: {
         type: Boolean,
         default: false,

@@ -14,7 +14,8 @@ const register = async (req, res) => {
             email: userData.email,
             username: userData.username,
             password: userData.password,
-            emailToken: crypto.randomBytes(64).toString("hex")
+            emailToken: crypto.randomBytes(64).toString("hex"),
+            emailTokenExpiry: Date.now() + (1000 * 60 * 60)// 1 hour
         });
         await user.save();
         // console.log(user);
@@ -33,14 +34,14 @@ const verifyEmail = async (req, res) => {
         const user = await User.findOne({
             $and: [
                 { emailToken: { $ne: null } },
-                { emailToken: req.query.token }
+                { emailToken: req.query.token, emailTokenExpiry: { $gt: Date.now() } }
             ]
-        },//this fixes a bug that will send verification mail for the first user in db 
-            //if the query string is empty
-            "emailToken isVerified email username");
+        }, "emailToken isVerified email username");//this fixes a bug that will send verification mail for the first user in db 
+        //if the query string is empty
         //console.log(user);
         if (user) {
             user.emailToken = null;
+            user.emailTokenExpiry = undefined;
             user.isVerified = true;
             await user.save();
             req.session.user_id = user._id;
@@ -68,6 +69,7 @@ const forgotPassword = async (req, res, next) => {
         const foundUser = await User.findOne(criteria, "email emailToken");
         if (foundUser) {
             foundUser.emailToken = crypto.randomBytes(64).toString("hex");
+            foundUser.emailTokenExpiry = Date.now() + (1000 * 60 * 60);
             await foundUser.save();
             const resetPasswordURL = `http://${req.headers.host}/reset-password?token=${foundUser.emailToken}`;
             await sendEmail(foundUser.email, resetPasswordURL, "forgotPassword");
@@ -83,7 +85,7 @@ const forgotPassword = async (req, res, next) => {
 const renderResetPassword = async (req, res) => {
     const token = req.query.token;
     if (token) {
-        const user = await User.findOne({ emailToken: token });
+        const user = await User.findOne({ emailToken: token, emailTokenExpiry: { $gt: Date.now() } });
         if (user) {
             res.render("users/resetPassword", { token });
         } else {
@@ -99,11 +101,12 @@ const renderResetPassword = async (req, res) => {
 const resetPassword = async (req, res) => {
     const token = req.query.token;
     if (token) {
-        const user = await User.findOne({ emailToken: token }, "password email emailToken");
+        const user = await User.findOne({ emailToken: token, emailTokenExpiry: { $gt: Date.now() } }, "password email emailToken");
         if (user) {
             const newPassword = req.body.password;
             user.password = newPassword;
             user.emailToken = null;
+            user.emailTokenExpiry = undefined;
             await user.save();
             req.session.user_id = user._id;
             req.flash("success", "Your password has been successfully changed. Welcome back!");

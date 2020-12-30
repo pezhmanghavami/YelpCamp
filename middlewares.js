@@ -79,19 +79,17 @@ const isVerified = async (req, res, next) => {
     try {
         const { username } = req.body;
         const criteria = { $or: [{ username: username }, { email: username }, { mobile: username }, { anything: username }] };
-        const user = await User.findOne(criteria, "isVerified emailToken email");
+        const user = await User.findOne(criteria, "isVerified emailToken emailTokenExpiry email");
         if (!user) {
             req.flash("error", "Your username/email or password is incorrect.");
             return res.redirect('/login');
         }
-        //console.log(user.isVerified);
         if (user.isVerified) {
-            //user.isVerified = false;
-            //await user.save();
             return next();
         }
-        if (user.emailToken == null) {
+        if (user.emailToken === null) {
             user.emailToken = crypto.randomBytes(64).toString("hex");
+            user.emailTokenExpiry = Date.now() + (1000 * 60 * 60);
             await user.save();
             const verifyAccURL = `http://${req.headers.host}/verify-email?token=${user.emailToken}`;
             await sendEmail(user.email, verifyAccURL, "newUser");
